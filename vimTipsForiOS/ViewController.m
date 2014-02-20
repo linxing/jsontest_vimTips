@@ -15,7 +15,7 @@
 @implementation ViewController
 
 @synthesize commentView,contentView;
-
+NSTimer *timer;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -29,15 +29,23 @@
 }
 
 - (IBAction)Refresh:(id)sender {
+    [timer invalidate];
+    timer = [NSTimer scheduledTimerWithTimeInterval:2 target:self selector:@selector(getJson) userInfo:nil repeats:YES];
+}
+
+- (void)getJson {
+
+
     NSError *error;
-
+    
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://vim-tips.com/random_tips.json"]];
-
+    
     NSData *response = [NSURLConnection sendSynchronousRequest:request returningResponse:nil error:nil];
-
+    
     NSDictionary *vimtips = [NSJSONSerialization JSONObjectWithData:response options:NSJSONReadingMutableLeaves error:&error];
     
     contentView.text = [NSString stringWithFormat:@"%@",[vimtips objectForKey:@"content"]];
     commentView.text = [NSString stringWithFormat:@"%@",[vimtips objectForKey:@"comment"]];
+    
 }
 @end
